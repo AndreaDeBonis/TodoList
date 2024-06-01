@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ToDoLoco</title>
+  </head>
+  <body>
+    <div id="container" class="flex flex-col min-h-screen">
+      <header>
+        <nav
+          class="border-b px-12 py-6 flex flex-col gap-4 justify-between items-center bg-slate-500 sm:flex-row"
+        ></nav>
+      </header>
+
+      <div class="relative flex flex-col grow">
+        <div id="content" class="py-10 px-32 flex flex-col grow transition-all">
+          <div class="relative px-24 py-8 border">
+            <button class="bg-red-300 absolute right-4 px-2 py-1" id="delete">
+              X
+            </button>
+            <h2 class="text-2xl font-bold">${task.title}</h2>
+            <ul class="text-xl mt-3 ml-4">
+              <li>${task.description}</li>
+              <li>${task.dueDate}</li>
+              <li>${task.toDo}</li>
+              <li>${task.toDo}</li>
+            </ul>
+          </div>
+        </div>
+        <div class="absolute self-center bottom-5">
+          <button class="open-button bg-slate-500">Add Task</button>
+
+          <dialog class="modal">
+            <div class="p-4 space-x-2 flex flex-col">
+              <label for="title">Title</label>
+              <input type="text" id="title" name="title" required />
+              <label for="description">Description</label>
+              <input type="text" id="description" required />
+              <label for="dueDate">Due Date</label>
+              <input type="date" id="dueDate" required />
+              <label for="prioriy">Priority</label>
+              <input type="number" id="priority" required />
+              <button class="border bg-green-300" id="submit">Add Task</button>
+              <button class="border close-button">Close modal</button>
+            </div>
+          </dialog>
+        </div>
+      </div>
+      <footer class="bg-slate-500 flex justify-center items-center py-1">
+        <div class="justify-self-center">Created by adb</div>
+        <a href="https://github.com/AndreaDeBonis"></a>
+      </footer>
+    </div>
+  </body>
+</html>
