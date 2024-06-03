@@ -90,7 +90,7 @@ function renderMultiTasks(tasks) {
     if (e.target.id === "delete") {
       const taskContainer = e.target.parentElement;
       removeTask(taskContainer.dataset.id);
-      taskContainer.remove();
+      taskContainer.parentElement.remove();
     }
   });
 })();
