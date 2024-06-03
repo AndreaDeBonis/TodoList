@@ -18,11 +18,10 @@
       <div class="relative flex grow">
         <div class="flex flex-col grow">
           <input type="checkbox" id="toggleSidebar" class="hidden" />
-          <aside class="grow transition-all bg-slate-500 px-12 py-12 w-[15%]">
-            <div>prova</div>
-            <div>prova</div>
-            <div>prova</div>
-            <div>prova</div>
+          <aside
+            id="sidebar"
+            class="grow transition-all bg-slate-500 px-12 py-12 w-[15%]"
+          >
             <div>prova</div>
           </aside>
         </div>
@@ -31,9 +30,7 @@
           class="py-10 px-32 grid grid-cols-3 gap-4 grow transition-all"
         >
           <div class="relative px-24 py-8 border">
-            <button class="bg-red-300 absolute right-4 px-2 py-1" id="delete">
-              X
-            </button>
+            <button class="bg-red-300 absolute right-4 px-2 py-1">X</button>
             <h2 class="text-2xl font-bold">${task.title}</h2>
             <ul class="text-xl mt-3 ml-4">
               <li>${task.description}</li>
@@ -51,6 +48,8 @@
               <input type="text" id="title" name="title" required />
               <label for="description">Description</label>
               <input type="text" id="description" required />
+              <label for="project">project</label>
+              <input type="text" id="project" required />
               <label for="dueDate">Due Date</label>
               <input type="date" id="dueDate" required />
               <label for="prioriy">Priority</label>
