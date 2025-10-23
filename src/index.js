@@ -1,3 +1,4 @@
+import { createTask, printTask, addTask, removeTask, tasks } from "./modules/tasks.js";
 import "./style.css";
 import {
   parse,
@@ -7,33 +8,13 @@ import {
   isWithinInterval,
 } from "date-fns";
 
-let tasks = [];
 let projects = ["Default"];
 const content = document.getElementById("content");
 const projectsContainer = document.getElementById("projects-container");
 let currentProject = "Default";
 let timeFilter = "Week";
 document.getElementById("default").checked = true;
-let idCounter = 0;
 
-function createTask(title, description, project, dueDate, priority) {
-  idCounter++;
-  return {
-    title,
-    description,
-    project,
-    dueDate,
-    priority,
-    toDo: false,
-    id: idCounter.toString(),
-  };
-}
-
-function printTask(task) {
-  console.log(task.title);
-  console.log(task.description);
-  console.log(task.dueDate);
-}
 
 function getTasks() {
   const tasksByProject = tasks.filter(
@@ -79,17 +60,6 @@ function printAllTasks(tasks, filter) {
   tasks.forEach((task) => printTask(task));
 }
 
-function addTask(task) {
-  tasks.push(task);
-}
-
-function removeTask(taskId) {
-  tasks = tasks.filter((task) => task.id != taskId);
-}
-
-function toggleTaskState(task) {
-  task.toDo = !task.toDo;
-}
 
 const filter = { dueDate: "oggi", description: "ovvio" };
 
@@ -195,8 +165,8 @@ function submitTask() {
     new Date()
   );
   const priority = document.getElementById("priority").value;
-  const task = createTask(title, description, project, dueDate, priority);
-  addTask(task);
+  const task = createTask({title, description, project, dueDate, priority});
+  addTask(task.getInfo());
   renderMultiTasks(getTasks());
   console.log(projects);
 }
