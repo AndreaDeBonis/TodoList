@@ -1,5 +1,9 @@
-import { createTask, printTask, addTask, removeTask, tasks } from "./modules/tasks.js";
+import { createTask, printTask, addTask, removeTask, tasks, printAllTasks, getTasks } from "./modules/tasks.js";
+import { renderTask, renderProject, renderMultiProjects, renderMultiTasks } from "./ui/render.js";
+import { filterTasks } from "./modules/filter.js";
+
 import "./style.css";
+
 import {
   parse,
   format,
@@ -8,44 +12,20 @@ import {
   isWithinInterval,
 } from "date-fns";
 
+
+
 let projects = ["Default"];
-const content = document.getElementById("content");
-const projectsContainer = document.getElementById("projects-container");
 let currentProject = "Default";
 let timeFilter = "Week";
+const content = document.getElementById("content");
+const projectsContainer = document.getElementById("projects-container");
 document.getElementById("default").checked = true;
+const task = createTask({title: "New Task", description: "Task Description", project: "Default", dueDate: new Date(), priority: "medium"});
+addTask(task);
+console.log(filterTasks(getTasks(), currentProject, timeFilter));
+renderMultiTasks(filterTasks(getTasks(), currentProject, timeFilter));
 
 
-function getTasks() {
-  const tasksByProject = tasks.filter(
-    (task) => task.project === currentProject
-  );
-  if (timeFilter === "All") {
-    return tasksByProject;
-  }
-  if (timeFilter === "Today") {
-    return filterToday(tasksByProject);
-  }
-  if (timeFilter === "Week") {
-    return filterWeek(tasksByProject);
-  }
-}
-
-function filterToday(list) {
-  return list.filter(
-    (task) =>
-      format(task.dueDate, "MM-dd-yyyy") === format(new Date(), "MM-dd-yyyy")
-  );
-}
-
-function filterWeek(list) {
-  return list.filter((task) =>
-    isWithinInterval(task.dueDate, {
-      start: startOfISOWeek(new Date()),
-      end: endOfISOWeek(new Date()),
-    })
-  );
-}
 
 /* function filterTasks(tasks, filter) {
   let filteredTasks = [...tasks];
@@ -56,65 +36,33 @@ function filterWeek(list) {
   return filteredTasks;
 }
  */
-function printAllTasks(tasks, filter) {
-  tasks.forEach((task) => printTask(task));
+
+
+
+function submitTask() {
+  const title = document.getElementById("title").value;
+  const description = document.getElementById("description").value;
+  const project = currentProject;
+  const dueDate = parse(
+    document.getElementById("dueDate").value,
+    "yyyy-MM-dd",
+    new Date()
+  );
+  const priority = document.getElementById("priority").value;
+  const task = createTask({title, description, project, dueDate, priority});
+  addTask(task);
+  renderMultiTasks(filterTasks(getTasks(), currentProject, timeFilter));
+}
+
+function addProject(proj) {
+  if (projects.includes(proj)) {
+    return 0;
+  }
+  projects.push(proj);
 }
 
 
-const filter = { dueDate: "oggi", description: "ovvio" };
 
-function renderTask(task) {
-  const renderedTask = document.createElement("div");
-  renderedTask.innerHTML = `<div data-id="${
-    task.id
-  }" class="relative px-12 py-8 border">
-  <button class="bg-red-300 absolute right-4 px-2 py-1" id="delete">
-            X
-          </button>
-  <h2 class="text-2xl font-bold">${task.title}</h2>
-  <ul class="text-xl mt-3 ml-4">
-    <li>${task.description}</li>
-    <li>${task.project}</li>
-    <li>${format(task.dueDate, "MM-dd-yyy")}</li>
-    <li>${task.toDo}</li>
-    <li>${task.priority}</li>
-  </ul>
-</div>`;
-  content.appendChild(renderedTask);
-}
-
-function renderProject(project) {
-  const newProject = document.createElement("div");
-  newProject.innerHTML = `
-  <input
-    type="radio"
-    id="${project}"
-    name="projects"
-    value="${project}"
-    class="peer hidden"
-  />
-  <label
-    for="${project}"
-    data-project="${project}"
-    id="projectswitch"
-    class="grow w-12 px-3 py-2 rounded border border-slate-300 peer-checked:bg-slate-300"
-  >
-  ${project} </label
-  ><br />`;
-  newProject.classList.add("w-full", "flex");
-  projectsContainer.appendChild(newProject);
-  document.getElementById(project).checked = true;
-}
-
-function renderMultiProjects() {
-  projectsContainer.innerHTML = "";
-  projects.forEach((el) => renderProject(el));
-}
-
-function renderMultiTasks(tasks) {
-  content.innerHTML = "";
-  tasks.forEach((task) => renderTask(task));
-}
 
 (function () {
   const modal = document.querySelector(".modal");
@@ -137,46 +85,20 @@ function renderMultiTasks(tasks) {
       removeTask(taskContainer.dataset.id);
       taskContainer.parentElement.remove();
     }
-    if (e.target.id === "submit-project") {
+    if (e.target.id === "submit-project") {;
+      if (!document.getElementById("project").value) return;
       const project = document.getElementById("project").value;
       addProject(project);
-      renderMultiProjects();
+      renderMultiProjects(projects, projectsContainer);
     }
     if (e.target.id === "projectswitch") {
       currentProject = e.target.dataset.project;
-      console.log(getTasks());
-      renderMultiTasks(getTasks());
+      renderMultiTasks(filterTasks(getTasks(), currentProject, timeFilter));
     }
     if (e.target.id === "filter") {
       timeFilter = e.target.dataset.filter;
-      renderMultiTasks(getTasks());
+      renderMultiTasks(filterTasks(getTasks(), currentProject, timeFilter));
     }
   });
 })();
 
-function submitTask() {
-  const title = document.getElementById("title").value;
-  const description = document.getElementById("description").value;
-  const project = currentProject;
-  console.log(document.getElementById("dueDate").value);
-  const dueDate = parse(
-    document.getElementById("dueDate").value,
-    "yyyy-MM-dd",
-    new Date()
-  );
-  const priority = document.getElementById("priority").value;
-  const task = createTask({title, description, project, dueDate, priority});
-  addTask(task.getInfo());
-  renderMultiTasks(getTasks());
-  console.log(projects);
-}
-
-function addProject(proj) {
-  if (projects.includes(proj)) {
-    return 0;
-  }
-  projects.push(proj);
-}
-
-console.log(format(new Date(), "MM-dd-yyyy"));
-console.log(startOfISOWeek(new Date()));
